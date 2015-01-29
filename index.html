@@ -21,8 +21,9 @@
         <div class="panel-heading">Mountaineer Questions</div>
           <ul class="list-group">
             <li class="list-group-item" ng-repeat="data in questionResponse">
-              <span class="badge">{{message.createdAt | date:"medium"}}</span>
+              <span class="badge">{{data.createdAt | date:"medium"}}</span>
               {{data.text}}
+              <button ng-click="changeStatus(data)">blah</button>
             </li>
           </ul>
         </div>
