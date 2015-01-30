@@ -2,52 +2,32 @@
 var app = angular.module('parseQ');
 
 app.service('parseService', function($http, $q) {
-	this.postData = function(question) {
+	var url = 'https://api.parse.com/1/classes/queue';
+
+	this.postQueue = function(question) {
+		var data = {};
+		data.question = question;
+		data.status = 'red';
+		return $http.post(url, data);
+	};
+
+	this.getQueue = function() {
 		var deferred = $q.defer();
-		var url = 'https://api.parse.com/1/classes/question';
-		var qObj = {
-			'status': red,
-			'text': question
-		};
 
-		$http.post(url, qObj).then(function(resp) {
-			deferred.resolve(resp);
-			// console.log(resp);
-		}, function(error) {
-			deferred.reject(error);
-		});
-
+		$http.get(url + '?order=createdAt')
+			.then(function(resp) {
+				deferred.resolve(resp.data.results);
+			});
 		return deferred.promise;
 	};
 
-	this.getData = function() {
-		var deferred = $q.defer();
-		var url = 'https://api.parse.com/1/classes/question';
-
-		$http.get(url).then(function(resp) {
-			// console.log(resp);
-			var result = resp.data.results;
-			deferred.resolve(resp);
-		}, function(error) {
-			deferred.reject(error);
-		});
-
-		return deferred.promise;
+	this.updateQueue = function(questionObj) {
+		questionObj.status = 'yellow';
+		return $http.put(url + '/' + questionObj.objectId, {status: questionObj.status});
 	};
 
-	this.updateData = function(obj) {
-		var deferred = $q.defer();
-		var url = 'https://api.parse.com/1/classes/question' + objectId;
-		obj.status = 'yellow'
-
-		$http.put(url, obj).then(function(resp) {
-			deferred.resolve(resp);
-			// console.log(resp);
-		}, function(error) {
-			deferred.reject(error);
-		});
-
-		return deferred.promise;
-	};
+	this.delFromQ = function(questionObj) {
+		return $http.delete(url + '/' + questionObj.objectId);
+	}
 
 });
